@@ -114,9 +114,10 @@ export class CustomerEditComponent implements OnInit {
   onSubmit() {
     this._customerService.updateCustomers(this.customer, this.form.value).subscribe((data) => {
       if(data.status === 'success'){
-        this.result = '';
+        this.result = 'Customer information successfully updated.';
+        setTimeout(() => { this.router.navigate(['/default-layout/customer/list']); }, 800);
       }else{
-        this.result = '';
+        this.result = 'Something went wrong. Please try again later.';
       }
     });
   }

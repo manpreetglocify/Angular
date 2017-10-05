@@ -4,6 +4,7 @@ import { CustomValidators } from 'ng2-validation';
 import { SharedService } from '../../../layouts/shared-service';
 import {CustomerService} from '../../../services/customer.service';
 import {CommonService} from '../../../services/common.service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-customer-add',
@@ -18,7 +19,8 @@ export class CustomerAddComponent implements OnInit {
   regions: string;
 
   constructor( private fb: FormBuilder, private _sharedService: SharedService,
-    private _customerService: CustomerService, private _commonService: CommonService) {
+    private _customerService: CustomerService, private _commonService: CommonService,
+    private router: Router, private route: ActivatedRoute) {
     this._sharedService.emitChange(this.pageTitle);
     this._commonService.getCountries().subscribe(
       data => { this.countries = data},
@@ -47,11 +49,14 @@ export class CustomerAddComponent implements OnInit {
     });
   }
   onSubmit() {
-   this._customerService.addCustomers(this.form.value).subscribe(
-      data => { this.result = data},
-      err => console.error(err),
-      () => console.log('loading done')
-    );
+   this._customerService.addCustomers(this.form.value).subscribe((data) => {
+      if(data.status === 'success'){
+        this.result = 'Customer Successfully Updated';
+        setTimeout(() => { this.router.navigate(['/default-layout/customer/list']); }, 800);;
+      }else{
+        this.result = 'Something went wrong. Please try again later.';
+      }
+   });
   }
   setRegion(country) {
     this._commonService.getRegion(country.value).subscribe(
